@@ -5,8 +5,10 @@ const path = require('path');
 const dir = path.join(__dirname, 'app');
 const html = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(dir, 'styles.css'), 'utf8');
+const mobileCss = fs.readFileSync(path.join(dir, 'mobile.css'), 'utf8');
 const md = fs.readFileSync(path.join(dir, 'markdown.js'), 'utf8');
 const js = fs.readFileSync(path.join(dir, 'app.js'), 'utf8');
+const mobileJs = fs.readFileSync(path.join(dir, 'mobile.js'), 'utf8');
 
 // دالة بدل نص عادي: تمنع تفسير $& و $' و $1 داخل المحتوى المحقون
 function inject(src, needle, content) {
@@ -15,9 +17,17 @@ function inject(src, needle, content) {
 }
 
 let out = html;
-out = inject(out, '<link rel="stylesheet" href="styles.css">', '<style>\n' + css + '\n</style>');
+out = inject(
+  out,
+  '<link rel="stylesheet" href="styles.css">',
+  '<style>\n' + css + '\n\n' + mobileCss + '\n</style>'
+);
 out = inject(out, '<script src="markdown.js"></script>', '<script>\n' + md + '\n</script>');
-out = inject(out, '<script src="app.js"></script>', '<script>\n' + js + '\n</script>');
+out = inject(
+  out,
+  '<script src="app.js"></script>',
+  '<script>\n' + js + '\n</script>\n<script>\n' + mobileJs + '\n</script>'
+);
 
 const targets = [
   path.join(__dirname, 'MDX-Reader-Standalone.html'),
